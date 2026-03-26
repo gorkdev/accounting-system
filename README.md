@@ -122,6 +122,91 @@ Frontend adresi:
 
 - `http://localhost:3000` acildiginda durumlar ekranda gorunmeli
 
+## Gelistirme Rehberi
+
+Bu bolum, projede duzenli ve sorunsuz gelistirme yapman icin standart akisi anlatir.
+
+### 1) Main'i guncelle
+
+Calismaya baslamadan once ana dali guncelle:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+### 2) Yeni branch olustur
+
+Her is icin ayri branch ac:
+
+```bash
+git checkout -b feat/kisa-aciklama
+```
+
+Ornek branch adlari:
+
+- `feat/auth-login`
+- `fix/api-health-response`
+- `docs/readme-update`
+
+### 3) Gelistirme sirasinda calistirma
+
+Iki terminal kullan:
+
+- Terminal 1 (API):
+  ```bash
+  cd apps/api
+  npm run dev
+  ```
+- Terminal 2 (Web):
+  ```bash
+  cd apps/web
+  npm run dev
+  ```
+
+### 4) Degisiklikleri kontrol et
+
+Commit atmadan once:
+
+- Uygulama aciliyor mu kontrol et (`http://localhost:3000`)
+- API ayakta mi kontrol et (`http://localhost:3001`)
+- Yeni ekledigin ozellik beklendigi gibi calisiyor mu
+- Gerekiyorsa ilgili dokumani da guncelle (`README.md`, `apps/docs/*`)
+
+### 5) Commit at
+
+Degisiklikleri staged edip anlamli bir commit mesaji yaz:
+
+```bash
+git add .
+git commit -m "feat: kisa ve net aciklama"
+```
+
+Birden fazla konu varsa tek committe toplama; mumkunse kucuk ve odakli commitler at.
+
+### 6) Branch'i remote'a gonder
+
+```bash
+git push -u origin <branch-adi>
+```
+
+### 7) Pull Request ac
+
+PR acarken su 3 soruya cevap ver:
+
+- Ne degisti?
+- Neden degisti?
+- Nasil test edildi?
+
+Kisa ama net bir aciklama, kod inceleme surecini hizlandirir.
+
+### 8) Review sonrasi
+
+- Istenen duzeltmeleri ayni branch uzerinde yap.
+- Yeni commitlerle push et.
+- PR guncel kalmasi icin gerekirse `main` ile sync et.
+
+
 ## Commit Standarti
 
 Commit mesajlari `type: aciklama` formatinda yazilmalidir.
