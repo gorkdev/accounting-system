@@ -121,3 +121,30 @@ Frontend adresi:
 ## 10) Hizli kontrol
 
 - `http://localhost:3000` acildiginda durumlar ekranda gorunmeli
+
+## Commit Standarti
+
+Commit mesajlari `type: aciklama` formatinda yazilmalidir.
+
+Temel tipler:
+
+- `feat`: yeni ozellik
+- `fix`: hata duzeltme
+- `refactor`: kod iyilestirme (davranis degismez)
+- `style`: sadece format duzenlemeleri (bosluk, noktalama, lint-fix)
+- `docs`: dokumantasyon degisikligi
+- `chore`: config, bagimlilik, script gibi teknik isler
+- `perf`: performans iyilestirmesi
+- `test`: test ekleme/guncelleme
+
+Kisa kurallar:
+
+- Mesaji kisa, net ve fiil odakli yaz.
+- Tum harfler kucuk harf olmali.
+- Turkce ama Ingilizce karakterlerle olmali.
+
+Ornekler:
+
+- `feat: kullanici kayit ozelligi eklendi`
+- `fix: giris endpointinde token dogrulama hatasi duzeltildi`
+- `docs: kurulum adimlari guncellendi`
