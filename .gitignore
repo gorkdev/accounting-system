@@ -1,0 +1,33 @@
+# Dependencies (tum uygulamalar)
+node_modules/
+
+# Ortam dosyalari — sifre / DATABASE_URL burada; asla repoya gitmesin
+.env
+.env.*
+!.env.example
+
+# API (TypeScript derlemesi)
+dist/
+
+# Web (Nuxt / Vite)
+.output
+.data
+.nuxt
+.nitro
+.cache
+
+# Loglar ve gecici dosyalar
+logs
+*.log
+*.tsbuildinfo
+
+# IDE / OS
+.DS_Store
+.fleet
+.idea
+*.swp
+*.swo
+
+# Test / coverage (ileride eklenebilir)
+coverage
+.nyc_output
