@@ -5,10 +5,14 @@ Bu dokuman, projeyi unutmayasin diye "hangi dosya ne ise yariyor" sorusuna direk
 ## Genel yapi
 
 - `apps/api`: Backend (Express + Prisma + PostgreSQL)
-- `apps/web`: Frontend (Nuxt + Vue + Tailwind)
-- `apps/docs`: Proje notlari ve teknik dokumantasyon
-- `packages/types`: Ortak TypeScript tipleri (web + api + ileride mobile)
-- `packages/utils`: Ortak utility/helper fonksiyonlari
+- `apps/web`: Frontend (Nuxt 4 + Vue + Tailwind)
+- `apps/docs`: Proje notlari ve teknik dokumantasyon (bu dosya)
+- `packages/types`: Ortak TypeScript tipleri (web + api)
+- `packages/utils`: Ortak sabitler / yardimci export’lar
+
+Kok dizinde `package.json` **`workspaces`** (`apps/*`, `packages/*`) tanimlar. Pratikte gelistirme icin bagimlilik ve `dev` komutlari cogu zaman **`apps/web`** ve **`apps/api`** icinde calistirilir.
+
+Kok `.gitignore`: `node_modules`, `.env`, `dist` vb. — hassas dosyalar repoya girmemeli.
 
 ---
 
@@ -17,7 +21,7 @@ Bu dokuman, projeyi unutmayasin diye "hangi dosya ne ise yariyor" sorusuna direk
 ### Temel dosyalar
 
 - `apps/api/package.json`
-  - API tarafinin komutlarini ve bagimliliklarini tutar.
+  - `@accounting/types` baglidir (`DatabaseHealth` vb.).
   - Onemli komutlar:
     - `npm run dev`: API'yi gelistirme modunda calistirir.
     - `npm run db:create`: `account_system` DB'sini yoksa olusturur.
@@ -25,151 +29,95 @@ Bu dokuman, projeyi unutmayasin diye "hangi dosya ne ise yariyor" sorusuna direk
     - `npm run prisma:migrate`: Migration uygular/olusturur.
 
 - `apps/api/tsconfig.json`
-  - TypeScript ayarlari.
-  - `@/*` alias'i burada tanimli (`src/*`'a gider).
-  - Bu sayede `../../` yerine `@/services/...` seklinde import yaziyorsun.
+  - `@/*` alias'i `src/*`'a gider.
 
-- `apps/api/.env.example`
-  - Ortam degiskenleri sablonu.
-  - GitHub'a gidebilir.
-
-- `apps/api/.env`
-  - Gercek lokal config dosyasi (sifre vb. burada).
-  - GitHub'a gonderilmez.
+- `apps/api/.env.example` / `.env`
+  - Gercek sifreler `.env` icinde; Git’e gitmez.
 
 ### Calisma akisi (entrypoint ve server)
 
-- `apps/api/src/index.ts`
-  - En minimal giris noktasi.
-  - Sadece `startServer()` cagirir.
-
-- `apps/api/src/server.ts`
-  - Sunucuyu ayaga kaldiran orchestrator dosyasi.
-  - Sirayla:
-    1. `createApp()` ile Express app olusturur
-    2. Baslangicta DB baglantisini test eder
-    3. `PORT` uzerinden dinlemeye baslar
-
-- `apps/api/src/app.ts`
-  - Express uygulama konfigurasyonu:
-    - `helmet`, `cors`, `express.json`
-    - route baglama
-    - 404 handler (`NOT_FOUND`)
-    - 500 handler (`INTERNAL_SERVER_ERROR`)
+- `apps/api/src/index.ts` — `startServer()` girisi.
+- `apps/api/src/server.ts` — Express, DB testi, PORT.
+- `apps/api/src/app.ts` — `helmet`, `cors`, route’lar, 404/500.
 
 ### Config ve DB
 
-- `apps/api/src/env.ts`
-  - `.env` degerlerini yukler (`dotenv`)
-  - Zod ile dogrular (`PORT`, `DATABASE_URL`)
-  - Yanlis/eksik env varsa uygulama baslarken hata verir.
-
-- `apps/api/src/lib/prisma.ts`
-  - Tek bir `PrismaClient` instance'i olusturur.
-  - Tum servisler DB'ye buradan gider.
-
-- `apps/api/prisma/schema.prisma`
-  - Prisma datasource ve generator ayarlari.
-  - Gelecekte domain modelleri (account, transaction vs.) burada olacak.
+- `apps/api/src/env.ts` — Zod ile `PORT`, `DATABASE_URL`.
+- `apps/api/src/lib/prisma.ts` — Tek `PrismaClient`.
+- `apps/api/prisma/schema.prisma` — Datasource ve modeller.
 
 ### Route, servis, script
 
-- `apps/api/src/routes/index.ts`
-  - Su an tek endpoint:
-    - `GET /` -> backend/prisma/db durumunu JSON doner.
+- `apps/api/src/routes/index.ts` — `GET /` — JSON: `backend` + `getDatabaseHealth()` alanlari.
 
 - `apps/api/src/services/database.service.ts`
-  - DB saglik/ulasilabilirlik mantigi burada.
-  - `checkDatabaseConnectionOnStartup()`: startup sirasinda baglanti test/log
-  - `getDatabaseHealth()`: endpoint icin `calisiyor / calismiyor` sonucu
+  - `import type { DatabaseHealth } from "@accounting/types"`
+  - `getDatabaseHealth()` / startup baglanti kontrolu.
 
-- `apps/api/src/scripts/db-create.ts`
-  - DB otomasyon scripti.
-  - `DATABASE_URL` icinden hedef DB adini alir.
-  - DB yoksa olusturur.
-  - Sifre placeholder ise terminalden ister ve `.env` icine yazar.
+- `apps/api/src/scripts/db-create.ts` — `db:create` scripti.
 
 ---
 
 ## `apps/web` (Frontend)
 
+Ayrintili dosya listesi: `apps/web/WEB_DOSYA_REHBERI.md`.
+
 ### Temel dosyalar
 
-- `apps/web/package.json`
-  - Nuxt tarafinin komutlari ve bagimliliklari.
-  - Onemli komutlar:
-    - `npm run dev`
-    - `npm run build`
-    - `npm run preview`
+- `apps/web/package.json` — `@accounting/types`, `@accounting/utils` + Nuxt, Tailwind, Motion.
+- `apps/web/nuxt.config.ts` — Tailwind Vite plugin, `runtimeConfig.public.apiBaseUrl`.
+- `apps/web/app/app.vue` — `<NuxtLayout><NuxtPage /></NuxtLayout>`.
 
-- `apps/web/.env.example`
-  - Frontend env sablonu.
-  - `NUXT_PUBLIC_API_BASE_URL` burada tanimli.
+### Rotalar (Turkce slug)
 
-- `apps/web/.env`
-  - Gercek lokal frontend env.
+- `/` — yonlendirme (`/ozet` veya `/giris-yap`).
+- `/giris-yap` — Auth layout, mock giris (cookie).
+- `/ozet` — Panel layout; backend saglik ozeti dahil.
 
-### Nuxt ve UI
+### Layout, middleware, auth
 
-- `apps/web/nuxt.config.ts`
-  - Nuxt ana konfigurasyonu.
-  - Tailwind Vite plugin ayari burada.
-  - `runtimeConfig.public.apiBaseUrl` burada tanimli.
-  - Frontend, backend URL'ini buradan okur.
+- `app/layouts/auth.vue`, `app/layouts/app.vue`
+- `app/middleware/auth.ts`, `guest.ts`
+- `app/composables/useAuth.ts` — cookie mock; ileride API token ile degistirilecek.
 
-- `apps/web/app/app.vue`
-  - Su an ana sayfa.
-  - API'den durum cekip ekranda gosterir:
-    - frontend
-    - backend
-    - prisma
-    - db
-  - `calisiyor`/`calismiyor` icin emoji gosterimi var.
+### UI bilesenleri
 
-- `apps/web/app/assets/css/main.css`
-  - Tailwind giris CSS dosyasi (`@import "tailwindcss";`).
-  - `nuxt.config.ts` icindeki `css` yolu bu dosyaya isaret etmeli.
+- `app/components/layout/` — Sidebar, TopBar, UserMenu. Nuxt global isimleri: **`LayoutAppSidebar`**, **`LayoutAppTopBar`**, **`LayoutAppUserMenu`** (`layouts/app.vue` icinde boyle kullan).
+
+### Stil
+
+- `app/assets/css/main.css` — `@import "tailwindcss";`
+- Panel ve giris sayfalarinda sade Tailwind utility’leri (slate paleti, kart/border).
+
+---
+
+## `packages/types`
+
+- `src/auth.ts` — `AuthSessionToken` vb.
+- `src/health.ts` — `DatabaseHealth`, `ApiRootHealthResponse`
+- `src/index.ts` — re-export’lar
+- Node `tsc` uyumu icin ic import’larda `.js` uzantisi kullanilir (`src/index.ts`).
+
+---
+
+## `packages/utils`
+
+- Ornek: `AUTH_SESSION_COOKIE_NAME`, `AUTH_SESSION_MAX_AGE_SEC` (`app/composables/useAuth.ts` ile uyumlu).
 
 ---
 
 ## Kisa notlar (unutmamak icin)
 
-- API ve web icin `.env` ayri dosyalardadir.
-- API root endpoint'i: `http://localhost:3001/`
-- Web dev endpoint'i: `http://localhost:3000/`
-- Projede import alias:
-  - API: `@/`
-- Ortak kod yaklasimi:
-  - `packages/types`: ortak type/interface tanimlari
-  - `packages/utils`: ortak fonksiyonlar (format, parser, helper vb.)
-- Yeni domain gelistirirken:
-  1. `schema.prisma` model ekle
-  2. migrate calistir
-  3. service yaz
-  4. route ile expose et
+- API root: `http://localhost:3001/`
+- Web dev: `http://localhost:3000/`
+- API import alias: `@/*` → `src/*`
+- Ortak sozlesme: `packages/types` (+ gerekiyorsa `packages/utils`)
+- Yeni domain: Prisma model → migrate → service → route → web’de sayfa/API cagrisi
 
 ---
 
-## Son oturumda yapilanlar
+## Tarihsel / arsiv notlari
 
-### API calistirma notu
-
-- `apps/api` tarafinda `npm run start` komutu `dist/index.js` bekler.
-- `dist` yoksa once `npm run build`, sonra `npm run start` calistirilir.
-- Gelistirme icin hizli yol: `npm run dev` (tsx watch ile TypeScript'i direkt calistirir).
-- Bu nedenle su an `nodemon` zorunlu degil; mevcut `dev` scripti ayni ihtiyaci karsiliyor.
-
-### Frontend UI paketleri
-
-- `apps/web` tarafina su paketler eklendi:
-  - `@heroicons/vue`
-  - `@vueuse/motion`
-- Motion, Nuxt'ta module yaklasimiyla kullanilabilir:
-  - `modules: ["@vueuse/motion/nuxt"]`
-
-### Frontend test sonucu
-
-- `app/app.vue` uzerinde icon + animasyon testleri yapildi.
-- Heroicons import ve gorunurluk testi tamamlandi.
-- `v-motion` ve motion directive'leri calisacak sekilde kullanildi.
-
+- Ilk taslakta `app/app.vue` uzerinde tek sayfa + icon/motion denemeleri vardi; su an sayfa yapisi `pages/` + `layouts/` ile ayrildi.
+- `nodemon` zorunlu degil; API `npm run dev` tsx watch kullanir.
+- `apps/web` icin `@heroicons/vue`, `@vueuse/motion` kurulu; panel shell’de su an agir icon kullanimi yok, motion modulu ihtiyaca gore sayfalarda kullanilabilir.

@@ -1,0 +1,1 @@
+export { AUTH_SESSION_COOKIE_NAME, AUTH_SESSION_MAX_AGE_SEC } from "./auth.js";
