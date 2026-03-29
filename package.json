@@ -1,0 +1,8 @@
+{
+  "name": "accounting-system",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

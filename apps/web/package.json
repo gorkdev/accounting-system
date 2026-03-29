@@ -10,6 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@accounting/types": "file:../../packages/types",
+    "@accounting/utils": "file:../../packages/utils",
     "@heroicons/vue": "^2.2.0",
     "@tailwindcss/vite": "^4.2.2",
     "@vueuse/motion": "^3.0.3",

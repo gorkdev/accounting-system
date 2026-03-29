@@ -1,15 +1,8 @@
+import type { DatabaseHealth } from "@accounting/types";
+
 import { prisma } from "@/lib/prisma.js";
 
-export type DatabaseHealth =
-  | {
-      prisma: "calisiyor";
-      db: "calisiyor";
-    }
-  | {
-      prisma: "calismiyor";
-      db: "calismiyor";
-      reason: string;
-    };
+export type { DatabaseHealth };
 
 export async function checkDatabaseConnectionOnStartup() {
   try {

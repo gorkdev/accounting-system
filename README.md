@@ -4,6 +4,9 @@ Bu proje bir monorepo yapisindadir:
 
 - `apps/web`: Nuxt frontend
 - `apps/api`: Express + Prisma backend
+- `packages/types`, `packages/utils`: Ortak tipler ve yardimci sabitler
+
+Kokte `package.json` icinde `workspaces` tanimlidir. Gunluk gelistirmede `npm install` ve `npm run dev` komutlarini genelde **`apps/api`** ve **`apps/web`** icinden calistirmak yeterlidir.
 
 ## 1) Gereksinimler
 
@@ -120,7 +123,9 @@ Frontend adresi:
 
 ## 10) Hizli kontrol
 
-- `http://localhost:3000` acildiginda durumlar ekranda gorunmeli
+- `http://localhost:3000` kok adresi, oturum durumuna gore `/ozet` veya `/giris-yap` sayfasina yonlendirir.
+- Giris sayfasi: `/giris-yap` (ornek form; gercek API auth henuz yok, cookie tabanli mock oturum).
+- Ozet paneli: `/ozet` — sol sidebar, ust bar, sistem durumu kartlari (API `GET /` ile uyumludur).
 
 ## Gelistirme Rehberi
 

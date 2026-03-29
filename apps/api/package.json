@@ -12,6 +12,7 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
+    "@accounting/types": "file:../../packages/types",
     "@prisma/client": "^6.16.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
