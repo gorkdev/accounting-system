@@ -7,6 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Domain modellerini (Account, Transaction, Invoice, vb.)
-// birazdan buraya ekleyeceğiz. Şimdilik bağlantı ve migration pipeline'ı için boş bırakıyoruz.
+// API Key modeli - API erisim kontrolu icin
+model ApiKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// User modeli - kullanici yonetimi
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 

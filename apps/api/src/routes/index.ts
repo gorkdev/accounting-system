@@ -1,9 +1,11 @@
 import { Router } from "express";
 
 import { getDatabaseHealth } from "@/services/database.service.js";
+import { userRouter } from "./user.routes.js";
 
 export const router = Router();
 
+// Health check endpoint
 router.get("/", async (_req, res) => {
   const database = await getDatabaseHealth();
   res.json({
@@ -11,4 +13,7 @@ router.get("/", async (_req, res) => {
     ...database,
   });
 });
+
+// User endpoints (API key gerektirir)
+router.use("/api", userRouter);
 
